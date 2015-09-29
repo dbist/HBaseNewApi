@@ -117,33 +117,36 @@ public class HBaseAPI {
         try (Connection connection = ConnectionFactory.createConnection(config);
                 final BufferedMutator mutator = connection.getBufferedMutator(params)) {
 
-//            List<Put> puts = new ArrayList<>();
-//            int count = 0;
-//            Put put;
-//
-//            for (int i = 0; i < 1000000000; i++) {
-//                String rowKey = UUID.randomUUID().toString();
-//
-//                put = new Put(Bytes.toBytes(rowKey));
-//                put.addColumn(Bytes.toBytes(CF_DEFAULT), Bytes.toBytes("cnt"), Bytes.toBytes(count));
-//                puts.add(put);
-//                count++;
-//                
-//                if((count % 10000) == 0) {
-//                    mutator.mutate(puts);
-//                    LOG.info("Count: " + count);
-//                    puts.clear();
-//                }
-//            }
-//            mutator.mutate(puts);
-            String rowKey = UUID.randomUUID().toString();
-            Put put = new Put(Bytes.toBytes(rowKey));
-            put.addColumn(Bytes.toBytes(CF_DEFAULT), Bytes.toBytes("cnt"), Bytes.toBytes(""));
+            List<Put> puts = new ArrayList<>();
+            int count = 0;
+            Put put;
 
-            try(Table table = connection.getTable(tableName)) {
-                LOG.info("WRITING");
-                table.put(put);
+            for (int i = 0; i < 1000000; i++) {
+                String rowKey = UUID.randomUUID().toString();
+
+                put = new Put(Bytes.toBytes(rowKey));
+                put.addColumn(Bytes.toBytes(CF_DEFAULT), Bytes.toBytes("cnt"), Bytes.toBytes(count));
+                puts.add(put);
+                count++;
+                
+                if((count % 10000) == 0) {
+                    mutator.mutate(puts);
+                    LOG.info("Count: " + count);
+                    puts.clear();
+                }
             }
+            mutator.mutate(puts);
+            
+//            String rowKey = UUID.randomUUID().toString();
+//            Put put = new Put(Bytes.toBytes(rowKey));
+//            put.addColumn(Bytes.toBytes(CF_DEFAULT), Bytes.toBytes("cnt"), Bytes.toBytes(""));
+
+//            try(Table table = connection.getTable(tableName)) {
+//                LOG.info("WRITING");
+//                
+//                
+//            }
+//            mutator.mutate(put);
             
 
         } catch (IOException ex) {
@@ -168,6 +171,10 @@ public class HBaseAPI {
         //createSchemaTables(config);
         //modifySchema(config);
         
+        long start = System.currentTimeMillis();
         write(config);
+        
+        long end = System.currentTimeMillis();
+        LOG.info("Time: " + (end - start)/1000);
     }
 }
