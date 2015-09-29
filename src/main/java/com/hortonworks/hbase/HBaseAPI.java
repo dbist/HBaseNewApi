@@ -23,10 +23,8 @@ import org.apache.hadoop.hbase.client.BufferedMutator;
 import org.apache.hadoop.hbase.client.BufferedMutatorParams;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.RetriesExhaustedWithDetailsException;
-import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.io.compress.Compression.Algorithm;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -157,13 +155,13 @@ public class HBaseAPI {
     public static void main(String... args) throws IOException {
         Configuration config = HBaseConfiguration.create();
 
-//        config.set("hbase.zookeeper.quorum", "jetmaster2.jetnetname.artem.com,jetslave5.jetnetname.artem.com,jetslave1.jetnetname.artem.com");
-//        config.set("hbase.zookeeper.property.clientPort", "2181");
-//        config.set("zookeeper.znode.parent", "/hbase-unsecure");
-
-        config.set("hbase.zookeeper.quorum", "sandbox.hortonworks.com");
+        config.set("hbase.zookeeper.quorum", "jetmaster2.jetnetname.artem.com,jetslave5.jetnetname.artem.com,jetslave1.jetnetname.artem.com");
         config.set("hbase.zookeeper.property.clientPort", "2181");
         config.set("zookeeper.znode.parent", "/hbase-unsecure");
+
+//        config.set("hbase.zookeeper.quorum", "sandbox.hortonworks.com");
+//        config.set("hbase.zookeeper.property.clientPort", "2181");
+//        config.set("zookeeper.znode.parent", "/hbase-unsecure");
         
         //Add any necessary configuration files (hbase-site.xml, core-site.xml)
         //  config.addResource(new Path(System.getenv("HBASE_CONF_DIR"), "hbase-site.xml"));
