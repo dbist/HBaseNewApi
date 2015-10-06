@@ -67,7 +67,7 @@ public class CreateTableWithSplits {
         return splits;
     }
 
-    public static void createTableWithSplits(Configuration config) {
+    public static void createTableWithSplits(Configuration config, String numRegions) {
         try (Connection connection = ConnectionFactory.createConnection(config);
                 Admin admin = connection.getAdmin()) {
 
@@ -80,11 +80,11 @@ public class CreateTableWithSplits {
             //THEN FOLLOW UP WITH OTHER PROPERTIES LIKE IN MEMORY AND ANYTHING TO IMPROVE WRITES
             
             
-            byte[][] splits = getHexSplits("0", "fff", 600);
+            byte[][] splits = getHexSplits("0", "fff", Integer.parseInt(numRegions));
             Set<byte[]> splitSet = new HashSet<>();
             Collections.addAll(splitSet, splits);
 
-            LOG.info("Creating table.");
+            LOG.info(String.format("Creating table with %s regions", numRegions));
             createOrOverwrite(admin, table, splits);
             LOG.info("Done.");
         } catch (IOException ex) {
@@ -137,6 +137,10 @@ public class CreateTableWithSplits {
     }
 
     public static void main(String... args) throws IOException {
+        if(args.length < 1) {
+            throw new RuntimeException("Please pass a number of regions");
+        }
+        
         Configuration config = HBaseConfiguration.create();
 
         config.set("hbase.zookeeper.quorum", "jetmaster2.jetnetname.artem.com,jetslave5.jetnetname.artem.com,jetslave1.jetnetname.artem.com");
@@ -144,7 +148,7 @@ public class CreateTableWithSplits {
         config.set("zookeeper.znode.parent", "/hbase-unsecure");
 
         long start = System.currentTimeMillis();
-        createTableWithSplits(config);
+        createTableWithSplits(config, args[0]);
 
         long end = System.currentTimeMillis();
         LOG.log(Level.INFO, "Time: {0}", (end - start) / 1000);
