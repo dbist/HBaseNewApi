@@ -59,7 +59,8 @@ public class CreateTableWithSplits {
         lowestKey = lowestKey.add(regionIncrement);
         for (int i = 0; i < numRegions - 1; i++) {
             BigInteger key = lowestKey.add(regionIncrement.multiply(BigInteger.valueOf(i)));
-            byte[] b = String.format("%016x", key).getBytes();
+            //byte[] b = String.format("%016x", key).getBytes();
+            byte[] b = String.format("%x", key).getBytes();
             splits[i] = b;
         }
         return splits;
@@ -73,7 +74,7 @@ public class CreateTableWithSplits {
             //table.addFamily(new HColumnDescriptor(CF_DEFAULT).setCompressionType(Algorithm.SNAPPY));
             table.addFamily(new HColumnDescriptor(CF_DEFAULT));
             
-            byte[][] splits = getHexSplits("001", "fff", 2000);
+            byte[][] splits = getHexSplits("0", "fff", 1200);
             Set<byte[]> splitSet = new HashSet<>();
             Collections.addAll(splitSet, splits);
 
