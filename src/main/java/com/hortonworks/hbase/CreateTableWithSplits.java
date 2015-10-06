@@ -74,7 +74,7 @@ public class CreateTableWithSplits {
             //table.addFamily(new HColumnDescriptor(CF_DEFAULT).setCompressionType(Algorithm.SNAPPY));
             table.addFamily(new HColumnDescriptor(CF_DEFAULT));
             
-            byte[][] splits = getHexSplits("0", "ffffff", 1050);
+            byte[][] splits = getHexSplits("0", "ffffff", 600);
             Set<byte[]> splitSet = new HashSet<>();
             Collections.addAll(splitSet, splits);
 
