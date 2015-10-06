@@ -79,7 +79,7 @@ public class CreateTableWithSplits {
             //RUN THIS NEXT TO SEE IF FAST_DIFF MADE A DIFFERENCE
             //THEN FOLLOW UP WITH OTHER PROPERTIES LIKE IN MEMORY AND ANYTHING TO IMPROVE WRITES
             
-            byte[][] splits = getHexSplits("077", "f77", Integer.parseInt(numRegions));
+            byte[][] splits = getHexSplits("010c3", "ff3e4b", Integer.parseInt(numRegions));
 
             LOG.info(String.format("Creating table with %s regions", numRegions));
             createOrOverwrite(admin, table, splits);
