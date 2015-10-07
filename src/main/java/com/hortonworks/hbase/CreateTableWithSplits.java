@@ -72,16 +72,17 @@ public class CreateTableWithSplits {
                 Admin admin = connection.getAdmin()) {
 
             HTableDescriptor table = new HTableDescriptor(TableName.valueOf(TABLE_NAME));
-            //table.addFamily(new HColumnDescriptor(CF_DEFAULT).setCompressionType(Algorithm.SNAPPY));
-            table.addFamily(new HColumnDescriptor(CF_DEFAULT)
+            table.addFamily(new HColumnDescriptor(CF_DEFAULT)   //.setCompressionType(Algorithm.SNAPPY)
                     .setDataBlockEncoding(DataBlockEncoding.FAST_DIFF));
             
-            //RUN THIS NEXT TO SEE IF FAST_DIFF MADE A DIFFERENCE
             //THEN FOLLOW UP WITH OTHER PROPERTIES LIKE IN MEMORY AND ANYTHING TO IMPROVE WRITES
             
             //beginning key:
             //01088a3
-            byte[][] splits = getHexSplits("0087e3", "fffe4b", Integer.parseInt(numRegions));
+            //0087e3
+            //0010bb
+            
+            byte[][] splits = getHexSplits("00000001", "fffffe4b", Integer.parseInt(numRegions));
 
             LOG.info(String.format("Creating table with %s regions", numRegions));
             createOrOverwrite(admin, table, splits);
