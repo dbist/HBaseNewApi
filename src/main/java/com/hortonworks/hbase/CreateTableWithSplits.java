@@ -67,11 +67,11 @@ public class CreateTableWithSplits {
         return splits;
     }
 
-    public static void createTableWithSplits(Configuration config, String numRegions) {
+    public static void createTableWithSplits(Configuration config, String tableName, String numRegions) {
         try (Connection connection = ConnectionFactory.createConnection(config);
                 Admin admin = connection.getAdmin()) {
 
-            HTableDescriptor table = new HTableDescriptor(TableName.valueOf(TABLE_NAME));
+            HTableDescriptor table = new HTableDescriptor(TableName.valueOf(tableName));
             table.addFamily(new HColumnDescriptor(CF_DEFAULT)   //.setCompressionType(Algorithm.SNAPPY)
                     .setDataBlockEncoding(DataBlockEncoding.FAST_DIFF));
             
@@ -81,10 +81,9 @@ public class CreateTableWithSplits {
             //01088a3
             //0087e3
             //0010bb
-            
             byte[][] splits = getHexSplits("00000001", "fffffe4b", Integer.parseInt(numRegions));
 
-            LOG.info(String.format("Creating table with %s regions", numRegions));
+            LOG.info(String.format("Creating table %s with %s regions", tableName, numRegions));
             createOrOverwrite(admin, table, splits);
             LOG.info("Done.");
         } catch (IOException ex) {
@@ -92,9 +91,9 @@ public class CreateTableWithSplits {
         }
     }
 
-    public static void write(Configuration config) {
+    public static void write(Configuration config, String tableNameStr) {
 
-        TableName tableName = TableName.valueOf(TABLE_NAME);
+        TableName tableName = TableName.valueOf(tableNameStr);
         /**
          * a callback invoked when an asynchronous write fails.
          */
@@ -148,7 +147,7 @@ public class CreateTableWithSplits {
         config.set("zookeeper.znode.parent", "/hbase-unsecure");
 
         long start = System.currentTimeMillis();
-        createTableWithSplits(config, args[0]);
+        createTableWithSplits(config, args[0], args[1]);
 
         long end = System.currentTimeMillis();
         LOG.log(Level.INFO, "Time: {0}", (end - start) / 1000);
