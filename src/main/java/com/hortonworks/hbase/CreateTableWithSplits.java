@@ -8,10 +8,7 @@ package com.hortonworks.hbase;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +25,6 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.RetriesExhaustedWithDetailsException;
-import org.apache.hadoop.hbase.io.compress.Compression.Algorithm;
 import org.apache.hadoop.hbase.io.encoding.DataBlockEncoding;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -67,7 +63,7 @@ public class CreateTableWithSplits {
         return splits;
     }
 
-    public static void createTableWithSplits(Configuration config, String tableName, String numRegions) {
+    public static void createTableWithSplits(Configuration config, String tableName, String numRegions, String startKey, String endKey) {
         try (Connection connection = ConnectionFactory.createConnection(config);
                 Admin admin = connection.getAdmin()) {
 
@@ -81,9 +77,9 @@ public class CreateTableWithSplits {
             //01088a3
             //0087e3
             //0010bb
-            byte[][] splits = getHexSplits("00000001", "fffffe4b", Integer.parseInt(numRegions));
+            byte[][] splits = getHexSplits(startKey, endKey, Integer.parseInt(numRegions));
 
-            LOG.info(String.format("Creating table %s with %s regions", tableName, numRegions));
+            LOG.info(String.format("Creating table: %s with %s regions, startKey: %s, endKey: %s", tableName, numRegions, startKey, endKey));
             createOrOverwrite(admin, table, splits);
             LOG.info("Done.");
         } catch (IOException ex) {
@@ -136,8 +132,8 @@ public class CreateTableWithSplits {
     }
 
     public static void main(String... args) throws IOException {
-        if(args.length < 1) {
-            throw new RuntimeException("Please pass a number of regions");
+        if(args.length < 4) {
+            throw new RuntimeException("yarn jar jarname tableName numRegions startKey endKey");
         }
         
         Configuration config = HBaseConfiguration.create();
@@ -146,8 +142,13 @@ public class CreateTableWithSplits {
         config.set("hbase.zookeeper.property.clientPort", "2181");
         config.set("zookeeper.znode.parent", "/hbase-unsecure");
 
+        String tableName = args[0];
+        String numRegions = args[1];
+        String startKey = args[2];
+        String endKey = args[3];
+        
         long start = System.currentTimeMillis();
-        createTableWithSplits(config, args[0], args[1]);
+        createTableWithSplits(config, tableName, numRegions, startKey, endKey);
 
         long end = System.currentTimeMillis();
         LOG.log(Level.INFO, "Time: {0}", (end - start) / 1000);
