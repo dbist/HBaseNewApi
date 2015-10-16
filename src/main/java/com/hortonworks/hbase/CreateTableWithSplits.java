@@ -45,6 +45,7 @@ public class CreateTableWithSplits {
             admin.deleteTable(table.getTableName());
         }
         admin.createTable(table, splits);
+    //    admin.createTableAsync(table, splits);
     }
 
     public static byte[][] getHexSplits(String startKey, String endKey, int numRegions) {
